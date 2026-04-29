@@ -298,4 +298,31 @@ ALL_TOOLS = [
             "required": ["table_name", "properties"],
         },
     },
+    {
+        "name": "trigger_job_run",
+        "description": (
+            "Trigger a new run of a Databricks job after fixes have been applied and verified. "
+            "Call this as the final action before producing the triage report, but only when "
+            "at least one automated fix was successfully applied and verified. "
+            "Do NOT call if the failure requires manual action (permissions, library install). "
+            "Returns the new run_id and a URL to monitor progress."
+        ),
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "job_id": {
+                    "type": "integer",
+                    "description": "The Databricks job ID to re-run.",
+                },
+                "job_parameters": {
+                    "type": "object",
+                    "description": (
+                        "Optional key-value pairs to pass as job parameters for this run. "
+                        "Omit to use the job's default parameters."
+                    ),
+                },
+            },
+            "required": ["job_id"],
+        },
+    },
 ]

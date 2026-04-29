@@ -42,6 +42,7 @@ class DatabricksToolExecutor:
             "update_job_settings": self.update_job_settings,
             "set_spark_config": self.set_spark_config,
             "update_table_properties": self.update_table_properties,
+            "trigger_job_run": self.trigger_job_run,
         }
         fn = dispatch.get(tool_name)
         if fn is None:
@@ -530,6 +531,24 @@ class DatabricksToolExecutor:
             "table_name": table_name,
             "properties_set": properties,
             "sql_executed": sql,
+        }
+
+    def trigger_job_run(
+        self,
+        job_id: int,
+        job_parameters: dict | None = None,
+    ) -> dict:
+        kwargs: dict = {"job_id": job_id}
+        if job_parameters:
+            kwargs["notebook_params"] = job_parameters
+        response = self.client.jobs.run_now(**kwargs)
+        run_id = response.run_id
+        run_page_url = f"{self.client.config.host}/#job/{job_id}/run/{run_id}"
+        return {
+            "status": "triggered",
+            "job_id": job_id,
+            "new_run_id": run_id,
+            "run_page_url": run_page_url,
         }
 
 
